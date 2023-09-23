@@ -5,25 +5,12 @@ import prisma from '@/lib/prisma'
 import { Activity, Client, Project } from '@prisma/client'
 import { revalidatePath } from "next/cache";
 import ActivityDuration from "./duration";
-import { Play, Pause } from "lucide-react";
+import { Play, Pause, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ActivityItemRow } from "./activity-item-row";
 
-type TimeProps = {
-    startAt: string
-}
 
-const Time = ({ startAt }: TimeProps) => {
-    const date = new Date(startAt)
-    const now = new Date()
-    const elapsed = now.getTime() - date.getTime()
-    console.log(elapsed)
-    return (
-        <div>
-            {elapsed}
-        </div>
-    )
 
-}
 type NewActivityProps = {
     activity?: Activity | null
 }
@@ -74,7 +61,23 @@ const NewActivity = ({ activity }: NewActivityProps) => {
         </div>
     )
 }
-const DailyActivity = async () => {
+type DailyActivitiesprops = {
+    activities: Activity[]
+}
+const DailyActivity = ({ activities }: DailyActivitiesprops) => {
+    return (
+        <main>
+            <h2>Here is what you`ve done today</h2>
+            <ul className="flex flex-col gap-2 p-4 items-center">
+                {activities.map(activity => (
+                    <ActivityItemRow activity={activity} key={activity.id} />
+
+                ))}
+
+
+            </ul>
+        </main>
+    )
 
 }
 const Track = async () => {
@@ -87,9 +90,45 @@ const Track = async () => {
         }
     })
 
+    const now = new Date()
+
+    const startOfToday = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate()
+    )
+
+    const endOfToday = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate(),
+        23,
+        59,
+        59
+    )
+
+    const dailyActivities = await prisma.activity.findMany({
+        where: {
+            tenantId: user.tenant.id,
+            userId: user.id,
+            OR: [{
+                startAt: {
+                    equals: startOfToday,
+                }
+            }, {
+                endAt: {
+                    lte: endOfToday
+                }
+            }],
+        },
+        orderBy: {
+            startAt: 'asc'
+        }
+    })
     return (
-        <main className="container mx-auto">
+        <main className="container mx-auto space-y-10">
             <NewActivity activity={currentActivity} />
+            <DailyActivity activities={dailyActivities} />
 
         </main>
     )

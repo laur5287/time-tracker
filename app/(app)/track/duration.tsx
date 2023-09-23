@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useState } from "react"
+import { pad } from '@/lib/utils'
 
-const pad = (n: number) => n.toString().padStart(2, '0')
 
 type Props = {
     startAt: string
