@@ -8,8 +8,12 @@ export default function AppLayout({
 }) {
     return (
         <>
+
             <Navbar />
-            {children}
+            <main className="h-full">
+                {children}
+
+            </main>
         </>
     )
 }

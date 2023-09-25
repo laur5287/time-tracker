@@ -66,7 +66,7 @@ type DailyActivitiesprops = {
 }
 const DailyActivity = ({ activities }: DailyActivitiesprops) => {
     return (
-        <main>
+        <div>
             <h2>Here is what you`ve done today</h2>
             <ul className="flex flex-col gap-2 p-4 items-center">
                 {activities.map(activity => (
@@ -76,7 +76,7 @@ const DailyActivity = ({ activities }: DailyActivitiesprops) => {
 
 
             </ul>
-        </main>
+        </div>
     )
 
 }
@@ -126,11 +126,11 @@ const Track = async () => {
         }
     })
     return (
-        <main className="container mx-auto space-y-10">
+        <section className="container mx-auto space-y-10">
             <NewActivity activity={currentActivity} />
             <DailyActivity activities={dailyActivities} />
 
-        </main>
+        </section>
     )
 }
 export default Track;
