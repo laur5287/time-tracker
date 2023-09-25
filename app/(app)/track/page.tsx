@@ -5,26 +5,41 @@ import prisma from '@/lib/prisma'
 import { Activity, Client, Project } from '@prisma/client'
 import { revalidatePath } from "next/cache";
 import ActivityDuration from "./duration";
-import { Play, Pause, ArrowRight } from "lucide-react";
+import { Play, Pause, ArrowRight, Building2, FolderOpenDot } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ActivityItemRow } from "./activity-item-row";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger } from "@/components/ui/select";
 
 
 
 type NewActivityProps = {
     activity?: Activity | null
+    clients: Client[]
+    projects: Project[]
 }
-const NewActivity = ({ activity }: NewActivityProps) => {
+const NewActivity = ({ activity, clients, projects }: NewActivityProps) => {
 
-    async function startActivity(data: FormData) {
+    async function upsertActivity(data: FormData) {
         'use server'
         const user = await getUserSession()
-        const activity = await prisma.activity.create({
-            data: {
+        const client = data.get('client') as string
+        const project = data.get('project') as string
+        await prisma.activity.upsert({
+            where: {
+                id: data.get('id') as string
+            },
+            create: {
                 user: { connect: { id: user.id } },
+                tenant: { connect: { id: user.tenant.id } },
                 name: data.get('name') as string,
                 startAt: new Date(),
-                tenant: { connect: { id: user.tenant.id } },
+                client: !!client ? { connect: { id: client } } : undefined,
+                project: !!project ? { connect: { id: project } } : undefined
+            },
+            update: {
+                name: data.get('name') as string,
+                client: !!client ? { connect: { id: client } } : undefined,
+                project: !!project ? { connect: { id: project } } : undefined
             }
         })
         revalidatePath('/track')
@@ -32,12 +47,17 @@ const NewActivity = ({ activity }: NewActivityProps) => {
 
     async function stopActivity(data: FormData) {
         'use server'
+        const client = data.get('client') as string
+        const project = data.get('project') as string
         const activity = await prisma.activity.update({
             where: {
                 id: data.get('id') as string
             },
             data: {
-                endAt: new Date()
+                endAt: new Date(),
+                name: data.get('name') as string,
+                client: !!client ? { connect: { id: client } } : undefined,
+                project: !!project ? { connect: { id: project } } : undefined
             }
         })
         revalidatePath('/track')
@@ -45,11 +65,43 @@ const NewActivity = ({ activity }: NewActivityProps) => {
     }
     return (
         <div className="">
-            <h2 className="text-lg font-medium mb-2">What are you working on</h2>
-            <form action={activity ? stopActivity : startActivity}>
+            <h2 className="mb-2 text-lg font-medium">What are you working on</h2>
+            <form action={activity ? stopActivity : upsertActivity}>
                 <div className="flex items-center gap-4">
-                    <Input type='string' name="name" autoFocus autoComplete="name your activity" defaultValue={activity?.name || ''} />
+                    <Input required type='string' name="name" autoFocus autoComplete="name your activity" defaultValue={activity?.name || ''} />
                     <input type="hidden" name="id" defaultValue={activity?.id || ''} />
+                    <Select name="client">
+                        <SelectTrigger className="w-[50px]">
+                            <Building2 size={32} />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectLabel>Client</SelectLabel>
+                                <SelectItem value="">None</SelectItem>
+                                {clients.map((client) => (
+                                    <SelectItem value={client.id} key={client.id}>
+                                        {client.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                    <Select name="project">
+                        <SelectTrigger className="w-[50px]">
+                            <FolderOpenDot size={32} />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectLabel>Project</SelectLabel>
+                                <SelectItem value="">None</SelectItem>
+                                {projects.map((project) => (
+                                    <SelectItem value={project.id} key={project.id}>
+                                        {project.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
                     {activity &&
                         <ActivityDuration startAt={activity.startAt.toString()} />
                     }
@@ -68,7 +120,7 @@ const DailyActivity = ({ activities }: DailyActivitiesprops) => {
     return (
         <div>
             <h2>Here is what you`ve done today</h2>
-            <ul className="flex flex-col gap-2 p-4 items-center">
+            <ul className="flex flex-col items-center gap-2 p-4">
                 {activities.map(activity => (
                     <ActivityItemRow activity={activity} key={activity.id} />
 
@@ -87,6 +139,17 @@ const Track = async () => {
             tenantId: user.tenant.id,
             userId: user.id,
             endAt: null,
+        }
+    })
+    const clients = await prisma.client.findMany({
+        where: {
+            tenantId: user.tenant.id
+        }
+    })
+
+    const projects = await prisma.project.findMany({
+        where: {
+            tenantId: user.tenant.id
         }
     })
 
@@ -127,7 +190,7 @@ const Track = async () => {
     })
     return (
         <section className="container mx-auto space-y-10">
-            <NewActivity activity={currentActivity} />
+            <NewActivity activity={currentActivity} clients={clients} projects={projects} />
             <DailyActivity activities={dailyActivities} />
 
         </section>
