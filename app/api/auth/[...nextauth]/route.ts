@@ -3,6 +3,7 @@ import NextAuth from "next-auth/next";
 import GoogleProvider from 'next-auth/providers/google'
 import { PrismaClient } from "@prisma/client"; // Import PrismaClient
 import { session } from "@/lib/auth";
+import { cookies } from 'next/headers'
 
 const prisma = new PrismaClient(); // Initialize PrismaClient
 
@@ -20,10 +21,11 @@ const authOptions: NextAuthOptions = {
     ],
     callbacks: {
         async signIn({ account, profile }) {
-            console.log(' beggining sign In callback', account, profile)
+            // console.log(' beggining sign In callback', account, profile)
             if (!profile?.email) {
                 throw new Error('no profile')
             }
+            const inviteKey = cookies().get('invite_key')?.value
             const user = await prisma?.user.upsert({
                 where: {
                     email: profile.email,
@@ -32,11 +34,16 @@ const authOptions: NextAuthOptions = {
                     email: profile.email,
                     name: profile?.name,
                     avatar: (profile as any).picture,
-                    tenant: {
-                        create: {
-
+                    role: inviteKey ? 'USER' : 'OWNER',
+                    tenant: inviteKey
+                        ? {
+                            connect: {
+                                inviteKey
+                            }
                         }
-                    }
+                        : {
+                            create: {}
+                        }
                 },
                 update: {
                     name: profile.name,

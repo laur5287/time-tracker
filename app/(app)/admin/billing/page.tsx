@@ -2,12 +2,14 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { getUserSession } from '@/lib/auth'
 import prisma from '@/lib/prisma'
-// import { stripe } from '@/lib/stripe'
-import { AlertCircle, Check } from 'lucide-react'
+import { stripe } from '@/lib/stripe'
+import { AlertCircle, Check, CloudCog } from 'lucide-react'
 import { redirect } from 'next/navigation'
 
-const vercel_url = process.env.NEXT_PUBLIC_VERCEL_URL
-const DOMAIN = vercel_url ? `https://${vercel_url}` : 'http://localhost:3000'
+// const vercel_url = process.env.NEXT_PUBLIC_VERCEL_URL
+const DOMAIN =
+    // vercel_url ? `https://${vercel_url}` :
+    'http://localhost:3000'
 
 const PlanRow = ({ children }: React.PropsWithChildren) => (
     <li className="flex items-center">
@@ -46,31 +48,35 @@ const Upgrade = () => {
         const user = await getUserSession()
 
         const lookup = data.get('lookup_key') as string
-        // const prices = await stripe.prices.list({
-        //     lookup_keys: [lookup],
-        //     expand: ['data.product']
-        // })
+        const prices = await stripe.prices.list({
+            limit: 2,
+            lookup_keys: [lookup],
+            expand: ['data.product']
+        })
 
-        // const session = await stripe.checkout.sessions.create({
-        //     billing_address_collection: 'auto',
-        //     line_items: [
-        //         {
-        //             price: prices.data[0].id,
-        //             quantity: 1
-        //         }
-        //     ],
-        //     subscription_data: {
-        //         metadata: {
-        //             tenantId: user.tenant.id
-        //         }
-        //     },
-        //     mode: 'subscription',
-        //     success_url: `${DOMAIN}/admin/billing/success?session_id={CHECKOUT_SESSION_ID}`,
-        //     cancel_url: `${DOMAIN}/admin/billing?canceled=true`
-        // })
 
-        // redirect(session.url || '')
+        const session = await stripe.checkout.sessions.create({
+            billing_address_collection: 'auto',
+
+            line_items: [
+                {
+                    price: prices.data[0].id,
+                    quantity: 1
+                }
+            ],
+            subscription_data: {
+                metadata: {
+                    tenantId: user.tenant.id
+                }
+            },
+            mode: 'subscription',
+            success_url: `${DOMAIN}/admin/billing/success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${DOMAIN}/admin/billing?canceled=true`
+        })
+
+        redirect(session.url || '')
     }
+
 
     return (
         <div className="p-4 space-y-4 bg-blue-800 rounded-lg shadow border-1 text-neutral-50">
@@ -96,22 +102,22 @@ const Upgrade = () => {
 }
 
 const ProPlan = () => {
-    // async function createPortalSession() {
-    //     'use server'
+    async function createPortalSession() {
+        'use server'
 
-    //     const user = await getUserSession()
-    //     const tenant = await prisma.tenant.findUnique({
-    //         where: { id: user.tenant.id }
-    //     })
-    //     if (!tenant) throw new Error('No tenant found')
-    //     if (!tenant.stripeCustomerId) throw new Error('No stripe customer id')
+        const user = await getUserSession()
+        const tenant = await prisma.tenant.findUnique({
+            where: { id: user.tenant.id }
+        })
+        if (!tenant) throw new Error('No tenant found')
+        if (!tenant.stripeCustomerId) throw new Error('No stripe customer id')
 
-    //     const portalSession = await stripe.billingPortal.sessions.create({
-    //         customer: tenant.stripeCustomerId,
-    //         return_url: `${DOMAIN}/admin/billing`
-    //     })
-    //     redirect(portalSession.url)
-    // }
+        const portalSession = await stripe.billingPortal.sessions.create({
+            customer: tenant.stripeCustomerId,
+            return_url: `${DOMAIN}/admin/billing`
+        })
+        redirect(portalSession.url)
+    }
     return (
         <div className="p-4 space-y-4 bg-blue-800 rounded-lg shadow border-1 text-neutral-50">
             <h2 className="text-xl text-center">Current Plan: Pro</h2>
@@ -122,11 +128,11 @@ const ProPlan = () => {
                 ))}
             </ul>
             <div className="flex items-center justify-around">
-                {/* <form action={
+                <form action={
                     createPortalSession
                 }>
                     <Button type="submit">Manage Subscription</Button>
-                </form> */}
+                </form>
             </div>
         </div>
     )

@@ -86,6 +86,7 @@ export default async function TeamPage() {
                         <div className="flex flex-col gap-2">
                             <span className="text-lg font-semibold">{user.name}</span>
                             <span className="text-slate-600">{user.email}</span>
+                            <span className="text-slate-600">{user.role}</span>
                         </div>
                         <div className="flex flex-col justify-center gap-2">
                             <UpdateRoleForm
@@ -99,4 +100,8 @@ export default async function TeamPage() {
             </ul>
         </div>
     )
+}
+
+function isAdmin(user: { id: string; email: string; name: string | null; avatar: string | null; role: import(".prisma/client").$Enums.Role; createdAt: Date; updatedAt: Date; tenantId: string } | null) {
+    throw new Error('Function not implemented.')
 }
