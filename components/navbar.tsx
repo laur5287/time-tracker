@@ -2,6 +2,8 @@ import { getUserSession } from '@/lib/auth'
 import Link from 'next/link'
 
 import { Avatar } from '@/components/Avatar'
+import { ThemeToggle } from "@/components/theme-toggle"
+
 
 const links = [
     { href: '/track', label: 'Track' },
@@ -16,8 +18,8 @@ const Navbar = async () => {
     return (
         <>
             <section className="shadow">
-                <div className="container mx-auto flex items-center py-2 space-x-4">
-                    <Link href="/" className="py-1 px-2 hover:bg-slate-100 rounded">
+                <div className="container flex items-center py-2 mx-auto space-x-4">
+                    <Link href="/" className="px-2 py-1 rounded hover:bg-slate-100">
                         <span className="font-semibold">Time Tracker</span>
                     </Link>
                     <nav>
@@ -25,7 +27,7 @@ const Navbar = async () => {
                             {links.map(({ href, label }) => (
                                 <li key={href}>
                                     <Link
-                                        className="py-1 px-2 hover:bg-slate-100 rounded text-blue-500 hover:text-blue-600"
+                                        className="px-2 py-1 text-blue-500 rounded hover:bg-slate-100 hover:text-blue-600"
                                         href={href}
                                     >
                                         {label}
@@ -35,6 +37,7 @@ const Navbar = async () => {
                         </ul>
                     </nav>
                     <span className="flex-grow" />
+                    <ThemeToggle />
                     <Avatar user={user} />
 
                 </div>

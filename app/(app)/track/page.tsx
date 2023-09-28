@@ -67,8 +67,8 @@ const NewActivity = ({ activity, clients, projects }: NewActivityProps) => {
         <div className="">
             <h2 className="mb-2 text-lg font-medium">What are you working on</h2>
             <form action={activity ? stopActivity : upsertActivity}>
-                <div className="flex items-center gap-4">
-                    <Input required type='string' name="name" autoFocus autoComplete="name your activity" defaultValue={activity?.name || ''} />
+                <div className="flex items-center gap-4 ">
+                    <Input className="bg-background" required type='string' name="name" autoFocus autoComplete="name your activity" defaultValue={activity?.name || ''} />
                     <input type="hidden" name="id" defaultValue={activity?.id || ''} />
                     <Select name="client">
                         <SelectTrigger className="w-[50px]">
