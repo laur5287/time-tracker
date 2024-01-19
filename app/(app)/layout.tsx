@@ -1,5 +1,4 @@
 import Navbar from '@/components/navbar'
-import { ThemeProvider } from "@/components/theme-provider"
 
 
 export default function AppLayout({
@@ -9,13 +8,11 @@ export default function AppLayout({
 }) {
     return (
         <>
-            <ThemeProvider>
-                <Navbar />
-                <main className="h-full">
-                    {children}
+            <Navbar />
+            <main className="h-full">
+                {children}
 
-                </main>
-            </ThemeProvider>
+            </main>
 
         </>
     )

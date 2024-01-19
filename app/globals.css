@@ -35,12 +35,16 @@
     --ring: 215 20.2% 65.1%;
  
     --radius: 0.5rem;
-  }
+}
  
   .dark {
-    --background: 0, 0%, 0%;
-    --background_muted:0 0% 20%;  
+    --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
+
+
+    
+    --background_muted:0 0% 20%;  
+   
  
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;

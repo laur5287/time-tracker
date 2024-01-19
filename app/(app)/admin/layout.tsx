@@ -5,6 +5,9 @@ const links = [
     { href: '/admin/team', label: 'Team' },
     { href: '/admin/billing', label: 'Billing' }
 ]
+const a = {
+    key: 'value',
+}
 
 const Sidebar = () => {
     return (
