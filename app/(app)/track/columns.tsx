@@ -102,9 +102,10 @@ export const columns: ColumnDef<any>[] = [
 	{
 		id: "actions",
 		cell: ({ row }) => {
-			const [isEditing, setIsEditing] = useState(false)
+			// const [isEditing, setIsEditing] = useState(false)
 			const edit = () => {
-				setIsEditing(prev => !prev)
+				// setIsEditing(prev => !prev)
+				<>edit</>
 
 			}
 			return (
