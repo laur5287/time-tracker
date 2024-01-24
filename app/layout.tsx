@@ -1,11 +1,15 @@
 import './globals.css'
-import type { Metadata } from 'next'
+import { Metadata } from 'next'
 import { ThemeProvider } from "@/components/theme-provider"
 import { Inter } from 'next/font/google'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-	title: 'time-tracker',
+	title: {
+		// absolute: '',
+		default: 'Time-tracker default title',
+		template: ' Time-tracker template | %s ',
+	},
 	description: 'Track your time',
 }
 
@@ -18,7 +22,7 @@ export default function RootLayout({
 	return (
 
 		<html className='h-full' lang="en" suppressHydrationWarning>
-			<body className={`${inter.className} h-full`}>
+			<body className={`${inter.className} selection:bg-fuchsia-300 selection:text-fuchsia-900 h-full p-1 md:container`}>
 				<ThemeProvider
 					attribute="class"
 					defaultTheme="system"

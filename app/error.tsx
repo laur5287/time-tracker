@@ -12,10 +12,12 @@ export default function ErrorBoundary({
 }) {
 	const router = useRouter()
 	const pathName = usePathname()
+	console.log('this is the error obj', error)
+
 	return (
 		<>
 			<div className="flex w-full justify-between">
-				<h1>Something went wrong!</h1>
+				<h1>Something went wrong in layout </h1>
 				<Button onClick={() => router.back()}>Go back</Button>
 			</div>
 			<div className="flex flex-col">
@@ -26,7 +28,10 @@ export default function ErrorBoundary({
 
 				<Button onClick={() => reset()}>Try to recover</Button>
 
-				<p className="text-red-500">{error.message}</p>
+				<p className="text-red-500">{error.stack}</p>
+				<p className="font bold text-blue-500">
+					<pre>{JSON.stringify(error, null, 2)}</pre>
+				</p>
 
 
 			</div>

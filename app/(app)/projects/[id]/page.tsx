@@ -32,6 +32,7 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
 	const project = await prisma.project.findFirst({
 		where: {
 			id: params.id,
+			// id: 1,
 			tenantId: user.tenant.id,
 		},
 		include: {
@@ -39,10 +40,10 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
 		}
 	})
 
-	if (!project) {
-		throw notFound();
+	// if (!project) {
+	// 	throw notFound();
 
-	}
+	// }
 
 
 	async function deleteProject() {
@@ -59,9 +60,10 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
 	}
 
 	return (
-		<div >
+		< >
 			<div className="flex items-center justify-between">
-				<h1 className="mb-2 text-lg font-medium">Project Detail</h1>
+				<h1 className="mb-2 text-lg font-medium">Project Details</h1>
+
 				<Dialog>
 					<DropdownMenu>
 						<DropdownMenuTrigger>
@@ -69,7 +71,7 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
 						</DropdownMenuTrigger>
 						<DropdownMenuContent>
 							<DropdownMenuItem>
-								<Link className='w-full' href={`/projects/${project.id}/edit`}>Edit</Link>
+								<Link className='w-full' href={`/projects/${project?.id}/edit`}>Edit</Link>
 							</DropdownMenuItem>
 							<DialogTrigger asChild>
 								<DropdownMenuItem className="text-red-500">
@@ -95,14 +97,15 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
 						</DialogFooter>
 					</DialogContent>
 				</Dialog>
+
 			</div>
-			<h3>{project.name}</h3>
-			{project.client && (
+			<h3>{project?.name}</h3>
+			{project?.client && (
 				<div className='flex flex-col items-start'>
 					<h2>Client</h2>
-					<div>{project.client.name}</div>
+					<div>{project?.client?.name}</div>
 				</div>
 			)}
-		</div>
+		</>
 	)
 }

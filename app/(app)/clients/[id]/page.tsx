@@ -1,3 +1,4 @@
+import { Metadata } from 'next'
 import { Button } from '@/components/ui/button'
 import {
 	Dialog,
@@ -25,8 +26,14 @@ type ClientPageProps = {
 		id: string
 	}
 }
+export const generateMetadata = ({ params }: { params: { id: string } }): Metadata => {
+	return {
+		title: `Client ${params.id}`
+	}
+}
 
 export default async function ClientPage({ params }: ClientPageProps) {
+
 	const { user }: any = await getUserSession()
 	const client = await prisma.client.findFirst({
 		where: {

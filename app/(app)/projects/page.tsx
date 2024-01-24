@@ -1,10 +1,17 @@
-
+import { Metadata } from 'next'
 import { Button } from '@/components/ui/button'
 import { getUserSession } from '@/lib/auth'
 import prisma from '@/lib/prisma'
 import Link from 'next/link'
 import { ProjectsList } from './projects'
 import { redirect } from 'next/navigation'
+
+
+export const generateMetadata = ({ params }: { params: { id: string } }): Metadata => {
+	return {
+		title: `Projects ${params.id}`
+	}
+}
 
 const Blankslate = () => {
 	return (

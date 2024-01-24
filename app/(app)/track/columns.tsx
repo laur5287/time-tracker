@@ -122,12 +122,13 @@ export const columns: ColumnDef<any>[] = [
 						<DropdownMenuSeparator />
 						<DropdownMenuItem>
 							<Button
+								className="w-full"
 								onClick={edit}
 								variant='outline'>Edit</Button>
 						</DropdownMenuItem>
 						<DropdownMenuItem>
 							<Button onClick={async () => deleteActivity(row.original.id)}
-								variant='destructive'>Delete</Button>
+								variant='destructive' className="w-full">Delete</Button>
 
 						</DropdownMenuItem>
 					</DropdownMenuContent>

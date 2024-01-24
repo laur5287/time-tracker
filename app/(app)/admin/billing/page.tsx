@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { getUserSession } from '@/lib/auth'
 import prisma from '@/lib/prisma'
 import { stripe } from '@/lib/stripe'
-import { AlertCircle, Check, CloudCog } from 'lucide-react'
+import { AlertCircle, Check } from 'lucide-react'
 import { redirect } from 'next/navigation'
 
 // const vercel_url = process.env.NEXT_PUBLIC_VERCEL_URL

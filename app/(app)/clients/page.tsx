@@ -34,7 +34,7 @@ export default async function ClientPage() {
 
 	return (
 		<div className="container py-4 mx-auto">
-			<ClientListHeader />
+			{/* <ClientListHeader /> */}
 			{/* {clients.length > 0 ? <ClientList clients={clients} /> */}
 			{/* : */}
 			<Blankslate />

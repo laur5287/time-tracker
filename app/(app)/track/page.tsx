@@ -11,6 +11,8 @@ import { ActivityItemRow } from "./activity-item-row";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger } from "@/components/ui/select";
 import { columns } from "./columns"
 import { DataTable } from "./data-table"
+import Drawer from "@/components/Drawer";
+import Sheet from "@/components/Sheet";
 
 
 
@@ -67,54 +69,60 @@ const NewActivity = ({ activity, clients, projects }: NewActivityProps) => {
 
 	}
 	return (
-		<div id='NewActivity wrapper' className='border border-red-500'>
+		<div id='NewActivity_wrapper' className='sticky backdrop-blur-xl  w-full px-2 md:pr-16 drop-shadow-md py-2 '>
+
 			<h2 className=" mb-2 text-lg font-medium ">What are you working on?</h2>
 			<form action={activity ? stopActivity : upsertActivity}>
-				<div id='input wrapper' className="flex items-center gap-4 ">
+
+				<div id='input wrapper' className="flex flex-col md:flex-row  items-center gap-4 ">
 					<Input placeholder='Name your activity' required type='string' name="name" autoFocus autoComplete="name your activity" defaultValue={activity?.name || ''} />
 					<Input type="hidden" name="id" defaultValue={activity?.id || ''} />
-					<Select name="client">
-						<SelectTrigger className="w-[50px]">
-							<Building2 size={32} />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectGroup>
-								<SelectLabel>Client</SelectLabel>
-								<SelectItem value="">None</SelectItem>
-								{clients.map((client) => (
 
-									<SelectItem value={client.id} key={client.id}>
-										{client.name}
-									</SelectItem>
-								))}
-							</SelectGroup>
-						</SelectContent>
-					</Select>
+					<ul className=" flex justify-around w-full" id="buttons-wrapper">
 
-					<Select name="project">
-						<SelectTrigger className="w-[50px]">
-							<FolderOpenDot size={32} />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectGroup>
-								<SelectLabel>Project</SelectLabel>
-								<SelectItem value="">None</SelectItem>
-								{projects.map((project) => (
-									project.name &&
-									<SelectItem value={project.id} key={project.id}>
-										{project.name}
-									</SelectItem>
-								))}
-							</SelectGroup>
-						</SelectContent>
-					</Select>
+						<Select name="client">
+							<SelectTrigger className="w-[50px]">
+								<Building2 size={32} />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectGroup>
+									<SelectLabel>Client</SelectLabel>
+									<SelectItem value="">None</SelectItem>
+									{clients.map((client) => (
 
-					{activity &&
-						<ActivityDuration startAt={activity.startAt.toString()} />
-					}
-					<Button
-						className={cn('', activity ? 'bg-red-700' : 'bg-blue-900')}
-						type="submit">{activity ? <Pause /> : <Play />} </Button>
+										<SelectItem value={client.id} key={client.id}>
+											{client.name}
+										</SelectItem>
+									))}
+								</SelectGroup>
+							</SelectContent>
+						</Select>
+
+						<Select name="project">
+							<SelectTrigger className="w-[50px]">
+								<FolderOpenDot size={32} />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectGroup>
+									<SelectLabel>Project</SelectLabel>
+									<SelectItem value="">None</SelectItem>
+									{projects.map((project) => (
+										project.name &&
+										<SelectItem value={project.id} key={project.id}>
+											{project.name}
+										</SelectItem>
+									))}
+								</SelectGroup>
+							</SelectContent>
+						</Select>
+
+						{activity &&
+							<ActivityDuration startAt={activity.startAt.toString()} />
+						}
+						<Button
+							className={cn('', activity ? 'bg-red-700' : 'bg-blue-900')}
+							type="submit">{activity ? <Pause /> : <Play />} </Button>
+					</ul>
 				</div>
 			</form>
 		</div>
@@ -128,8 +136,8 @@ type DailyActivitiesprops = {
 const DailyActivity = ({ activities, clients, projects }: DailyActivitiesprops) => {
 	return (
 		<>
-			<div className=" ">
-				<h2 className='text-lg font-medium mb-2'>Here is what you`ve done today</h2>
+			<div className=" grow flex flex-col">
+				<h2 className=' text-lg font-medium mb-2'>Here is what you`ve done today</h2>
 				<DataTable clients={clients} projects={projects} columns={columns} data={activities} />
 			</div>
 		</>
@@ -200,9 +208,12 @@ const Track = async () => {
 		}
 	})
 	return (
-		<section className="container mx-auto space-y-10">
+		<section className=" mx-auto flex  flex-col h-full border-red-700 relative   space-y-10">
 			<NewActivity activity={currentActivity} clients={clients} projects={projects} />
-			<DailyActivity clients={clients} projects={projects} activities={dailyActivities} />
+			<div className="  flex grow   " id="activity-wrapper">
+				<DailyActivity clients={clients} projects={projects} activities={dailyActivities} />
+
+			</div>
 
 		</section>
 	)

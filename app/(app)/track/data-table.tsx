@@ -77,10 +77,11 @@ export function DataTable<TData, TValue>({
 	// console.log('data-table, table getTableRows,', table.getRowModel().rows[0].getVisibleCells())
 
 	return (
-		<div className="rounded-md border">
-			<div className="flex justify-between p-4" id="table-header-wrapper">
+		<div id='table' className="rounded-md grow  h-[70vh]   overflow-scroll relative ">
+			<div className="flex relative justify-between p-4 " id="table-header-wrapper">
 
 				<DataTableFacetedFilter
+
 					column={table.getColumn("Clients")}
 					title="Clients"
 					data={clients}
@@ -88,7 +89,7 @@ export function DataTable<TData, TValue>({
 
 
 			</div>
-			<Table>
+			<Table id='table' className='w-full '>
 				<TableHeader>
 					{table.getHeaderGroups().map((headerGroup) => (
 						<TableRow key={headerGroup.id}>
