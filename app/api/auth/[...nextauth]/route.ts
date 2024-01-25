@@ -40,30 +40,30 @@ const authOptions: NextAuthOptions = {
 
 			}
 			const inviteKey = cookies().get('invite_key')?.value
-			// const user = await prisma?.user.upsert({
-			// 	where: {
-			// 		email: profile.email,
-			// 	},
-			// 	create: {
-			// 		email: profile.email,
-			// 		name: profile?.name,
-			// 		avatar: (profile as any).picture,
-			// 		role: inviteKey ? 'USER' : 'OWNER',
-			// 		tenant: inviteKey
-			// 			? {
-			// 				connect: {
-			// 					inviteKey
-			// 				}
-			// 			}
-			// 			: {
-			// 				create: {}
-			// 			}
-			// 	},
-			// 	update: {
-			// 		name: profile.name,
-			// 		avatar: (profile as any).picture,
-			// 	}
-			// })
+			const user = await prisma?.user.upsert({
+				where: {
+					email: profile.email,
+				},
+				create: {
+					email: profile.email,
+					name: profile?.name,
+					avatar: (profile as any).picture,
+					role: inviteKey ? 'USER' : 'OWNER',
+					tenant: inviteKey
+						? {
+							connect: {
+								inviteKey
+							}
+						}
+						: {
+							create: {}
+						}
+				},
+				update: {
+					name: profile.name,
+					avatar: (profile as any).picture,
+				}
+			})
 
 			return true
 
