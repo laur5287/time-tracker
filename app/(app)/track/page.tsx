@@ -152,7 +152,7 @@ const DailyActivity = ({ activities, clients, projects }: DailyActivitiesprops) 
 }
 const Track = async () => {
 
-	const user: User | null = await getUserSession()
+	const { user }: any = await getUserSession()
 	console.log('current user', user)
 
 	const currentActivity = await prisma.activity.findFirst({

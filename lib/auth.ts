@@ -6,7 +6,7 @@ export const session = async ({ session, token }: any) => {
 	return session
 }
 
-export const getUserSession = async (): Promise<User | null> => {
+export const getUserSession = async (): Promise<User> => {
 	const authUserSession = await getServerSession({
 		callbacks: {
 			session
@@ -15,7 +15,7 @@ export const getUserSession = async (): Promise<User | null> => {
 
 	if (!authUserSession) {
 		console.log('no user')
-		return null
+
 
 
 	}
