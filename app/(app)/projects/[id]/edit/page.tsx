@@ -26,7 +26,7 @@ export default async function EditProjectPage({ params }: ProjectPageProps) {
 	const clients = (
 		await prisma.client.findMany({
 			where: {
-				tenantId: user.tenant.id
+				tenantId: user?.tenant.id
 			}
 		})
 	).map((client) => ({
@@ -35,7 +35,7 @@ export default async function EditProjectPage({ params }: ProjectPageProps) {
 	}))
 	const project = await prisma.project.findFirst({
 		where: {
-			tenantId: user.tenant.id,
+			tenantId: user?.tenant.id,
 			id: params.id
 		},
 		include: {
@@ -56,7 +56,7 @@ export default async function EditProjectPage({ params }: ProjectPageProps) {
 		await prisma.project.updateMany({
 			where: {
 				tenant: {
-					id: user.tenant.id
+					id: user?.tenant.id
 				},
 				id: project.id
 			},

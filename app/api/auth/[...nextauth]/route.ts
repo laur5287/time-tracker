@@ -20,11 +20,24 @@ const authOptions: NextAuthOptions = {
 		}),
 
 	],
+	events: {
+		signIn: async ({ user, account, profile }) => {
+			console.log('User signed in:', user);
+			console.log('Account:', account);
+			console.log('Profile:', profile);
+
+		}
+
+	},
 	callbacks: {
 		async signIn({ account, profile }) {
 			if (!profile?.email) {
 				redirect('/')
 				// throw new Error('no profile')
+			}
+			if (!account) {
+				console.log('no account', account)
+
 			}
 			const inviteKey = cookies().get('invite_key')?.value
 			const user = await prisma?.user.upsert({

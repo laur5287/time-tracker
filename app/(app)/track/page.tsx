@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getUserSession } from "@/lib/auth";
+import { User } from 'next-auth'
 import prisma from '@/lib/prisma'
 import { Activity, Client, Project } from '@prisma/client'
 import { revalidatePath } from "next/cache";
@@ -26,28 +27,33 @@ const NewActivity = ({ activity, clients, projects }: NewActivityProps) => {
 
 	async function upsertActivity(data: FormData) {
 		'use server'
-		const { user }: any = await getUserSession()
-		const client = data.get('client') as string
-		const project = data.get('project') as string
-		await prisma.activity.upsert({
-			where: {
-				id: data.get('id') as string
-			},
-			create: {
-				user: { connect: { id: user.id } },
-				tenant: { connect: { id: user.tenant.id } },
-				name: data.get('name') as string,
-				startAt: new Date(),
-				client: !!client ? { connect: { id: client } } : undefined,
-				project: !!project ? { connect: { id: project } } : undefined
-			},
-			update: {
-				name: data.get('name') as string,
-				client: !!client ? { connect: { id: client } } : undefined,
-				project: !!project ? { connect: { id: project } } : undefined
-			}
-		})
-		revalidatePath('/track')
+		try {
+			const { user }: any = await getUserSession()
+			const client = data.get('client') as string
+			const project = data.get('project') as string
+			await prisma.activity.upsert({
+				where: {
+					id: data.get('id') as string
+				},
+				create: {
+					user: { connect: { id: user.id } },
+					tenant: { connect: { id: user.tenant.id } },
+					name: data.get('name') as string,
+					startAt: new Date(),
+					client: !!client ? { connect: { id: client } } : undefined,
+					project: !!project ? { connect: { id: project } } : undefined
+				},
+				update: {
+					name: data.get('name') as string,
+					client: !!client ? { connect: { id: client } } : undefined,
+					project: !!project ? { connect: { id: project } } : undefined
+				}
+			})
+			revalidatePath('/track')
+		} catch (error) {
+			console.error('Error in upsertActivity:', error);
+		}
+
 	}
 
 	async function stopActivity(data: FormData) {
@@ -145,26 +151,26 @@ const DailyActivity = ({ activities, clients, projects }: DailyActivitiesprops) 
 
 }
 const Track = async () => {
-	const { user }: any = await getUserSession()
+
+	const user: User | null = await getUserSession()
+	console.log('current user', user)
 
 	const currentActivity = await prisma.activity.findFirst({
 		where: {
-			tenantId: user.tenant.id,
-			userId: user.id,
+			tenantId: user?.tenant?.id,
+			userId: user?.id,
 			endAt: null,
 		}
-
-
 	})
+
 	const clients = await prisma.client.findMany({
 		where: {
-			tenantId: user.tenant.id
+			tenantId: user?.tenant?.id
 		}
 	})
-
 	const projects = await prisma.project.findMany({
 		where: {
-			tenantId: user.tenant.id
+			tenantId: user?.tenant?.id
 		}
 	})
 
@@ -187,8 +193,8 @@ const Track = async () => {
 
 	const dailyActivities = await prisma.activity.findMany({
 		where: {
-			tenantId: user.tenant.id,
-			userId: user.id,
+			tenantId: user?.tenant?.id,
+			userId: user?.id,
 			OR: [{
 				startAt: {
 					equals: startOfToday,
@@ -207,6 +213,7 @@ const Track = async () => {
 			startAt: 'desc'
 		}
 	})
+
 	return (
 		<section className=" mx-auto flex  flex-col h-full border-red-700 relative   space-y-10">
 			<NewActivity activity={currentActivity} clients={clients} projects={projects} />

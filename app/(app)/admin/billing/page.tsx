@@ -107,7 +107,7 @@ const ProPlan = () => {
 
 		const user = await getUserSession()
 		const tenant = await prisma.tenant.findUnique({
-			where: { id: user.tenant.id }
+			where: { id: user?.tenant.id }
 		})
 		if (!tenant) throw new Error('No tenant found')
 		if (!tenant.stripeCustomerId) throw new Error('No stripe customer id')
@@ -141,7 +141,7 @@ const ProPlan = () => {
 export default async function BillingPage() {
 	const user = await getUserSession()
 	const tenant = await prisma.tenant.findUnique({
-		where: { id: user.tenant.id }
+		where: { id: user?.tenant.id }
 	})
 
 	return (

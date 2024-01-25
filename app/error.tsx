@@ -18,6 +18,7 @@ export default function ErrorBoundary({
 		<>
 			<div className="flex w-full justify-between">
 				<h1>Something went wrong in layout </h1>
+				<p className="">error caught by error.tsx in app folder</p>
 				<Button onClick={() => router.back()}>Go back</Button>
 			</div>
 			<div className="flex flex-col">
