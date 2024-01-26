@@ -47,8 +47,9 @@
 		"tailwindcss": "3.3.3",
 		"tailwindcss-animate": "^1.0.7",
 		"typescript": "5.2.2",
-		"vaul": "^0.8.0",
-		"prisma": "^5.3.1"
+		"vaul": "^0.8.0"
 	},
-	"devDependencies": {}
+	"devDependencies": {
+		"prisma": "^5.3.1"
+	}
 }

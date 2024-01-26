@@ -10,9 +10,6 @@ datasource db {
 }
 
 
-
-
-
 enum Plan {
   FREE
   PRO
