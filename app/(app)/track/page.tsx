@@ -150,10 +150,9 @@ const DailyActivity = ({ activities, clients, projects }: DailyActivitiesprops) 
 	)
 
 }
-const Track = async () => {
+export default async function Track() {
 
 	const { user }: any = await getUserSession()
-	console.log('current user', user)
 
 	const currentActivity = await prisma.activity.findFirst({
 		where: {
@@ -225,4 +224,3 @@ const Track = async () => {
 		</section>
 	)
 }
-export default Track;
